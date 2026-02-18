@@ -1,0 +1,24 @@
+name: Test
+on: push
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v5
+      - name: Set up Bazel
+        uses: bazel-contrib/setup-bazel@0.15.0
+        with:
+          bazelrc: |
+            common --lockfile_mode=error
+            build --verbose_failures
+            test --test_output=errors
+      - name: Run tests
+        shell: bash
+        run: |
+          bazelisk test //...
